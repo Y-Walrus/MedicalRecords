@@ -1,2 +1,2 @@
 # MedicalRecords
-Blockchain-based medial records
+Blockchain-based medical records
