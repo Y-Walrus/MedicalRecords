@@ -11,6 +11,7 @@ import json
 import base64
 import codecs
 
+
 # with open('private_key.pem', 'wb') as f:
 #    f.write(pem)
 
@@ -23,7 +24,7 @@ import codecs
 # do some private info?
 # how to make a transaction not have sender public address in it? makes problems in verification
 # make a Blockchain class?
-
+# pip install rsa
 
 class Account:  # get/set functions, _private_key
     def __init__(self, nonce=0, code_hash=""):
@@ -40,9 +41,12 @@ class Account:  # get/set functions, _private_key
 
     def create_transaction(self, recipient, data):
         signature = sign(data, self.private_key)
-        print(str(signature))
-        #print(codecs.decode(signature, "hex"))
-        print(bytearray.fromhex(str(signature)).decode())
+        # print(str(signature))
+        # print(codecs.decode(signature, "hex"))
+        # print(bytearray.fromhex(str(signature)).decode())
+        # print(signature)
+        # print(type(signature))
+        # print(signature.decode("utf-16"))
         return Transaction(self.public_key, recipient, data, signature)
 
 
@@ -93,6 +97,7 @@ class Block:
         s = str(self.block_number) + str(self.timestamp) + str(self.difficulty) + str(self.parent_hash)
         for t in self.transactions:
             # is str good enough here?
+            # maybe sender address (it is an object here)
             s += str(t.sender) + str(t.recipient) + str(t.data)
         self.mix_hash = sha256(s.encode()).hexdigest()
 
@@ -245,11 +250,39 @@ def save_chain(chain):
                     format=serialization.PublicFormat.SubjectPublicKeyInfo
                 ).decode(),
                 "recipient": t.recipient,
-                "data": t.data,
-                "signature": bytearray.fromhex(t.signature).decode()
+                "data": t.data.decode()
+                # "signature": t.signature
             })
-    with open("data.txt", "w") as outfile:
-        json.dump(data, outfile)
+    with open("data.txt", "w") as f:
+        json.dump(data, f)
+        # k = json.dumps(data)
+        # f.write(k.encode())
+
+
+def load_chain():
+    chain = []
+
+    with open("data.txt", "r") as f:
+        data = json.load(f)
+
+    for b in data["blocks"]:
+        block = Block(b["block_number"], b["parent_hash"])
+        block.timestamp = b["timestamp"]
+        block.difficulty = b["difficulty"]
+        block.mix_hash = b["mix_hash"]
+        block.nonce = b["nonce"]
+
+        for t in b["transactions"]:
+            sender = generate_public_key(a1.private_key)  # BAD!!!
+            # sender = serialization.load_pem_public_key(t["sender"]
+            recipeint = t["recipient"]
+            data = t["data"]
+            signature = ""
+            block.transactions.append(Transaction(sender, recipeint, data, signature))
+
+        chain.append(block)
+
+    return chain
 
 
 # cryptography_check()
@@ -264,6 +297,7 @@ if __name__ == "__main__":
     mine_block(genesis_block)
 
     chain_state = [genesis_block]
+
     pending_transactions = []
 
     a1 = Account()
@@ -315,7 +349,7 @@ if __name__ == "__main__":
             else:
                 print("No pending transactions")
 
-        elif cmd == "verify last block":
+        elif cmd == "verify last block":  # split verify block pow and block signature!
             block = chain_state[-1]
             mix_hash = block.mix_hash
             nonce = str(block.nonce)
@@ -328,6 +362,14 @@ if __name__ == "__main__":
         elif cmd == "save chain":
             save_chain(chain_state)
             print("Saved")
+
+        elif cmd == "load chain":
+            try:
+                chain_state = load_chain()
+            except:
+                print("Error loading")
+            else:
+                print("Loaded")
 
         else:
             print("No such command")
