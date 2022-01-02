@@ -12,6 +12,8 @@ import base64
 import codecs
 
 
+# log, 2p2, add user, threads
+
 # with open('private_key.pem', 'wb') as f:
 #    f.write(pem)
 
@@ -61,6 +63,8 @@ class Transaction:
     def __str__(self):
         s = ""
         s += "Transaction {0} to {1}: {2}".format(derive_address(self.sender), self.recipient, self.data)
+        s += "\nsignature: {0}".format(self.signature)
+        s += "\n" + str(type(self.signature))
         return s
 
 
@@ -95,6 +99,7 @@ class Block:
 
     def set_mix_hash(self):
         s = str(self.block_number) + str(self.timestamp) + str(self.difficulty) + str(self.parent_hash)
+
         for t in self.transactions:
             # is str good enough here?
             # maybe sender address (it is an object here)
@@ -226,7 +231,7 @@ def mine_block(block):
     while not sha256((block.mix_hash + str(nonce)).encode()).hexdigest().startswith("0" * block.difficulty):
         nonce += 1
     block.nonce = nonce
-    block.timestamp = time.time()
+    block.timestamp = time.time()  # set timestamp on creation so it enters the mix hash!! otherwise it isnt defended
     return True  # break in the middle if takes too long?
 
 
