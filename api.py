@@ -8,8 +8,11 @@ from cryptography.exceptions import InvalidSignature
 from hashlib import sha256
 import time
 import json
-import base64
-import codecs
+import pickle
+from threading import Thread
+from threading import Lock
+import socket
+import select
 
 
 # log, 2p2, add user, threads
@@ -17,18 +20,11 @@ import codecs
 # with open('private_key.pem', 'wb') as f:
 #    f.write(pem)
 
-# choice of asymmetric algorithm - RSA?
-
-# broadcasting a mined block
-# do i send the whole chain every time? or only when person joins?
-# store chain in files. json? every transaction in a different json?
-
-# do some private info?
 # how to make a transaction not have sender public address in it? makes problems in verification
-# make a Blockchain class?
 # pip install rsa
 
-class Account:  # get/set functions, _private_key
+
+class Account:  # TODO: get/set functions, _private_key (for all classes)
     def __init__(self, nonce=0, code_hash=""):
         self.nonce = nonce  # a counter that indicates the number of transactions sent from the account. This ensures transactions are only processed once. In a contract account, this number represents the number of contracts created by the account.
         self.code_hash = code_hash  # this hash refers to the code of an account on the Ethereum virtual machine (EVM). Contract accounts have code fragments programmed in that can perform different operations. This EVM code gets executed if the account gets a message call. It cannot be changed unlike the other account fields. All such code fragments are contained in the state database under their corresponding hashes for later retrieval. This hash value is known as a codeHash. For externally owned accounts, the codeHash field is the hash of an empty string.
@@ -51,20 +47,85 @@ class Account:  # get/set functions, _private_key
         # print(signature.decode("utf-16"))
         return Transaction(self.public_key, recipient, data, signature)
 
+    def save_private_key(self):
+        pem = self.private_key.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.PKCS8,
+            encryption_algorithm=serialization.NoEncryption()
+            # TODO: add password logic!! encryption_algorithm = serialization.BestAvailableEncryption(b'mypassword')
+        )
+        with open('private_key.pem', 'wb') as f:
+            f.write(pem)
 
-class Transaction:
-    def __init__(self, sender, recipient, data, signature):
-        # self.sender = sender
-        self.sender = sender  # sender public key
-        self.recipient = recipient  # the receiving address
-        self.data = data
-        self.signature = signature  # the identifier of the sender. This is generated when the sender's private key signs the transaction and confirms the sender has authorised this transaction
+
+class Blockchain:
+    def __init__(self):
+        self.chain_state = []
+        self.next_block_number = 0
+        genesis_block = Block(0, "GENESIS")
+        mine_block(genesis_block)
+        self.add_block(genesis_block)
+
+    def last_block(self):
+        return self.chain_state[-1]
+
+    def add_block(self, block):  # verification required before adding if block wasn't just mined
+        self.chain_state.append(block)
+        self.next_block_number += 1
+
+    def read_from_export(self):
+        for block in self.chain_state:
+            block.read_from_export()
+
+    def save_chain(self):
+        for block in self.chain_state:
+            block.prepare_to_export()
+
+        with open("chain.pkl", "wb") as f:
+            # pickle.dump(self, f, pickle.DEFAULT_PROTOCOL)
+            pickle.dump(self, f, pickle.HIGHEST_PROTOCOL)
+
+        for block in self.chain_state:
+            block.read_from_export()
+
+        """
+        data = {}
+        data["blocks"] = []
+        for b in chain:
+            data["blocks"].append({
+                "timestamp": b.timestamp,
+                "block_number": b.block_number,
+                "difficulty": b.difficulty,
+                "parent_hash": b.parent_hash,
+                "transactions": [],
+                "mix_hash": b.mix_hash,
+                "nonce": b.nonce
+            })
+            for t in b.transactions:
+                data["blocks"][-1]["transactions"].append({
+                    "sender": t.sender.public_bytes(
+                        encoding=serialization.Encoding.PEM,
+                        format=serialization.PublicFormat.SubjectPublicKeyInfo
+                    ).decode(),
+                    "recipient": t.recipient.public_bytes(
+                        encoding=serialization.Encoding.PEM,
+                        format=serialization.PublicFormat.SubjectPublicKeyInfo
+                    ).decode(),
+                    "data": t.data.decode()
+                    # "signature": t.signature
+                })
+        with open("data.txt", "w") as f:
+            json.dump(data, f)
+            # k = json.dumps(data)
+            # f.write(k.encode())
+        """
 
     def __str__(self):
         s = ""
-        s += "Transaction {0} to {1}: {2}".format(derive_address(self.sender), self.recipient, self.data)
-        s += "\nsignature: {0}".format(self.signature)
-        s += "\n" + str(type(self.signature))
+        for b in self.chain_state:
+            s += str(b) + "\n"
+            if b != self.last_block():
+                s += "\n"
         return s
 
 
@@ -97,27 +158,112 @@ class Block:
         s += "Parent hash: {0}".format(self.parent_hash)
         return s
 
-    def set_mix_hash(self):
+    def calculate_mix_hash(self):
         s = str(self.block_number) + str(self.timestamp) + str(self.difficulty) + str(self.parent_hash)
 
         for t in self.transactions:
             # is str good enough here?
             # maybe sender address (it is an object here)
-            s += str(t.sender) + str(t.recipient) + str(t.data)
-        self.mix_hash = sha256(s.encode()).hexdigest()
+            s += str(t.sender_public_key) + str(t.recipient_address) + str(t.data)
+        return sha256(s.encode()).hexdigest()
+
+    def set_mix_hash(self):
+        self.mix_hash = self.calculate_mix_hash()
+
+    def verify_mix_hash(self):
+        return self.mix_hash == self.calculate_mix_hash()
+
+    def verify_nonce(self):
+        return sha256((self.mix_hash + str(self.nonce)).encode()).hexdigest().startswith("0" * self.difficulty)
+
+    def verify_difficulty(self):
+        return self.difficulty == DIFFICULTY
+
+    def verify_transactions(self):
+        return all(transaction.verify_signature() for transaction in self.transactions)
 
     def add_transaction(self, transaction):
         # public key attribute for Account?
-        if verify_signature(transaction.data, transaction.signature,
-                            transaction.sender):
+        if transaction.verify_signature():
             self.transactions.append(transaction)
         else:
             print("NOT VALID TRANSACTION: " + str(transaction))
 
+    def verify_block(self):
+        return self.verify_mix_hash() and self.verify_nonce() and self.verify_difficulty() \
+               and self.verify_transactions()
 
-# class Pool on mining side / just list?
+    def prepare_to_export(self):
+        for transaction in self.transactions:
+            transaction.sender_key_to_bytes()
+
+    def read_from_export(self):
+        for transaction in self.transactions:
+            transaction.sender_bytes_to_key()
+
+    def save_block(self):
+        self.prepare_to_export()
+
+        with open("block.pkl", "wb") as f:
+            # pickle.dump(chain, f, pickle.DEFAULT_PROTOCOL)
+            pickle.dump(self, f, pickle.HIGHEST_PROTOCOL)
+
+        self.read_from_export()
+
+
+class Transaction:  # not found way to verify with sender address (rsa verify function problematic)
+    def __init__(self, sender_public_key, recipient_address, data, signature):
+        # self.sender = sender
+        self.sender_public_key = sender_public_key
+        self.recipient_address = recipient_address
+        self.data = data
+        self.signature = signature  # the identifier of the sender. This is generated when the sender's private key signs the transaction and confirms the sender has authorised this transaction
+
+    def __str__(self):
+        s = ""
+        s += "Transaction {0} to {1}: {2}".format(
+            derive_address(self.sender_public_key), self.recipient_address, self.data)
+        return s
+
+    def verify_signature(self):
+        try:
+            self.sender_public_key.verify(
+                self.signature,
+                self.data,
+                padding.PSS(
+                    mgf=padding.MGF1(hashes.SHA256()),
+                    salt_length=padding.PSS.MAX_LENGTH
+                ),
+                hashes.SHA256()
+            )
+        except InvalidSignature:
+            return False
+        return True
+
+    def sender_bytes_to_key(self):
+        self.sender_public_key = serialization.load_pem_public_key(self.sender_public_key.encode())
+
+    def sender_key_to_bytes(self):
+        self.sender_public_key = self.sender_public_key.public_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PublicFormat.SubjectPublicKeyInfo
+        ).decode()
+
 
 DIFFICULTY = 5
+
+# for socket that is used for receiving data from others in the network
+RECEIVE_HOST = "loopback"
+RECEIVE_PORT = 21568
+RECEIVE_ADDR = (RECEIVE_HOST, RECEIVE_PORT)
+
+# for socket that is used for sharing data with others in the network
+SHARE_HOST = "loopback"
+SHARE_START_PORT = 21567
+SHARE_PORT_AMOUNT = 1  # option to open several connection ports
+
+REQUEST_CHAIN_LOCK = Lock()
+REQUEST_BLOCK_LOCK = Lock()
 
 
 def generate_private_key():
@@ -144,23 +290,6 @@ def sign(data, private_key):
         ),
         hashes.SHA256()
     )
-
-
-def verify_signature(data, signature, public_key):
-    try:
-        public_key.verify(
-            signature,
-            data,
-            padding.PSS(
-                mgf=padding.MGF1(hashes.SHA256()),
-                salt_length=padding.PSS.MAX_LENGTH
-            ),
-            hashes.SHA256()
-        )
-    except InvalidSignature:
-        return False
-
-    return True
 
 
 def encrypt(data, public_key):
@@ -199,14 +328,15 @@ def cryptography_check():
     public_key = generate_public_key(a1.private_key)
     e_data = encrypt(data, public_key)
     signature = sign(data, a1.private_key)
-    is_signature_valid = verify_signature(data, signature, public_key)
+    # moved to block verification
+    # is_signature_valid = verify_signature(data, signature, public_key)
     d_data = decrypt(e_data, a1.private_key)
 
     print_private_key(a1.private_key)
     print_public_key(public_key)
     print(signature)
     print(data)
-    print(is_signature_valid)
+    # print(is_signature_valid)
     print(e_data)
     print(d_data)
 
@@ -218,7 +348,7 @@ def hashing_check():
     print(h.hexdigest())
     print(h.hexdigest().startswith("00"))
     i = 0
-    while not sha256(str(i).encode()).hexdigest().startswith("00000000"):
+    while not sha256(str(i).encode()).hexdigest().startswith("00000000"):  # whatt???? "0"*256
         i += 1
     print(i)
     print(sha256(str(i).encode()).hexdigest())
@@ -231,40 +361,17 @@ def mine_block(block):
     while not sha256((block.mix_hash + str(nonce)).encode()).hexdigest().startswith("0" * block.difficulty):
         nonce += 1
     block.nonce = nonce
-    block.timestamp = time.time()  # set timestamp on creation so it enters the mix hash!! otherwise it isnt defended
+    block.timestamp = time.time()  # TODO: set timestamp on creation so it enters the mix hash!! otherwise it isnt defended
     return True  # break in the middle if takes too long?
 
 
-def save_chain(chain):
-    data = {}
-    data["blocks"] = []
-    for b in chain:
-        data["blocks"].append({
-            "timestamp": b.timestamp,
-            "block_number": b.block_number,
-            "difficulty": b.difficulty,
-            "parent_hash": b.parent_hash,
-            "transactions": [],
-            "mix_hash": b.mix_hash,
-            "nonce": b.nonce
-        })
-        for t in b.transactions:
-            data["blocks"][-1]["transactions"].append({
-                "sender": t.sender.public_bytes(
-                    encoding=serialization.Encoding.PEM,
-                    format=serialization.PublicFormat.SubjectPublicKeyInfo
-                ).decode(),
-                "recipient": t.recipient,
-                "data": t.data.decode()
-                # "signature": t.signature
-            })
-    with open("data.txt", "w") as f:
-        json.dump(data, f)
-        # k = json.dumps(data)
-        # f.write(k.encode())
+def load_chain(file_name="chain.pkl"):
+    with open(file_name, "rb") as f:
+        chain = pickle.load(f)
 
+    chain.read_from_export()
 
-def load_chain():
+    """
     chain = []
 
     with open("data.txt", "r") as f:
@@ -286,8 +393,196 @@ def load_chain():
             block.transactions.append(Transaction(sender, recipeint, data, signature))
 
         chain.append(block)
-
+    """
     return chain
+
+
+def load_block(file_name="block.pkl"):
+    with open(file_name, "rb") as f:
+        block = pickle.load(f)
+    block.read_from_export()
+    return block
+
+
+def load_account(file_name="private_key.pem"):
+    a = Account()
+    with open(file_name, "rb") as f:
+        a.private_key = serialization.load_pem_private_key(
+            f.read(),
+            password=None,
+        )
+    a.public_key = generate_public_key(a.private_key)  # TODO: do it in a constructor
+    a.address = derive_address(a.public_key)
+
+    return a
+
+
+def generate_main_sockets():
+    """
+    Creates the required amount of connection sockets
+    :return: None
+    """
+    current_port = SHARE_START_PORT
+    for i in range(SHARE_PORT_AMOUNT):
+        server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server_sock.bind((SHARE_HOST, current_port))
+        server_sock.listen(2)
+        main_socks.append(server_sock)
+        current_port += 1
+    read_socks.extend(main_socks)
+    write_socks.extend(main_socks)
+
+
+def share_communication():
+    while True:
+        readables, writeables, exceptions = select.select(read_socks, write_socks, [])
+        for sock_obj in readables:
+            if sock_obj in main_socks:  # if the socket is a connection socket and there is a user waiting
+                new_sock, address = sock_obj.accept()
+                add_log_entry("Connection with new user for sharing")
+                print('Connect:', address, id(new_sock))
+                read_socks.append(new_sock)
+                write_socks.append(new_sock)
+            else:  # if the connection is already established
+                try:
+                    msg_length = int(sock_obj.recv(5))
+                    data = sock_obj.recv(msg_length)
+                except ConnectionResetError:  # if user has quit connection
+                    sock_obj.close()
+                    read_socks.remove(sock_obj)
+                    write_socks.remove(sock_obj)
+                    writeables.remove(sock_obj)
+                    add_log_entry("Ended a connection for sharing")
+                    print("Connection ended:", id(sock_obj))
+                else:
+                    if data == "":  # TODO: check if it should be here, what about if not data?? also in receive_communication()
+                        pass
+                    elif data.startswith("---WHOLE_CHAIN---".encode()):
+                        chain.save_chain()
+                        pending_messages.append((sock_obj, "chain.pkl"))  # TODO: better file transfer
+
+                    elif data.startswith("---LAST_BLOCK---".encode()):
+                        chain.last_block().save_block()
+                        pending_messages.append((sock_obj, "block.pkl"))  # TODO: better file transfer
+
+        else:  # TODO: understand why else
+            for message in pending_messages:
+                (user_sock, data) = message
+                if user_sock in writeables:
+                    if data == "chain.pkl":
+                        with open(data, "rb") as f:
+                            data = f.read()
+                        user_sock.send(str(len("---WHOLE_CHAIN---") + len(data)).zfill(5).encode())
+                        user_sock.send("---WHOLE_CHAIN---".encode() + data)
+                    elif data == "block.pkl":
+                        with open(data, "rb") as f:
+                            data = f.read()
+                        user_sock.send(str(len("---LAST_BLOCK---") + len(data)).zfill(5).encode())
+                        user_sock.send("---LAST_BLOCK---".encode() + data)
+                    else:
+                        user_sock.send(str(len(data)).zfill(5).encode())
+                        user_sock.send(data)
+
+                    pending_messages.remove(message)
+
+
+def receive_communication():
+    while 1:
+        try:
+            # RECEIVE_LOCK.acquire()
+            msg_length = int(receive_socket.recv(5))
+            data = receive_socket.recv(msg_length)
+            # RECEIVE_LOCK.release()
+        except ConnectionResetError:
+            print("ConnectionResetError in receive_communication()")
+            break
+        except ConnectionAbortedError:
+            print("ConnectionAbortedError in receive_communication()")
+            break
+        if not data:
+            break
+
+        if data.startswith("---WHOLE_CHAIN---".encode()):
+            data = data[len("---WHOLE_CHAIN---"):]
+            with open("received_chain.pkl", "wb") as f:
+                f.write(data)
+                REQUEST_CHAIN_LOCK.release()
+
+        elif data.startswith("---LAST_BLOCK---".encode()):
+            data = data[len("---LAST_BLOCK---"):]
+            with open("received_block.pkl", "wb") as f:
+                f.write(data)
+                # REQUEST_BLOCK_LOCK.release() # TODO: find a way to avoid RuntimeError: release unlocked lock
+            add_log_entry("Received a new block form a user")
+            print("RECEIVED A NEW BLOCK")
+            new_block = load_block("received_block.pkl")
+            add_log_entry(new_block)
+            print(new_block)
+            # TODO: new block protocol here
+            chain.add_block(new_block)
+        else:
+            print(data)
+
+
+def request_chain():
+    REQUEST_CHAIN_LOCK.acquire()
+    try:
+        msg = "---WHOLE_CHAIN---"
+        # RECEIVE_LOCK.acquire()
+        receive_socket.send(str(len(msg)).zfill(5).encode())
+        receive_socket.send(msg.encode())
+        REQUEST_CHAIN_LOCK.acquire()
+    except ConnectionResetError:
+        return False
+
+    """
+    # not used, moving to thread listening to new inputs
+    else:
+        try:
+            msg_length = int(receive_socket.recv(5))
+            data = receive_socket.recv(msg_length)
+            # RECEIVE_LOCK.release()
+        except ConnectionResetError:
+            # RECEIVE_LOCK.release()
+            print("ConnectionResetError in receive_communication()")
+        except ConnectionAbortedError:
+            # RECEIVE_LOCK.release()
+            print("ConnectionAbortedError in receive_communication()")
+        else:
+            if not data:
+                print("not data in request_chain()")
+
+            with open("received_chain.pkl", "wb") as f:
+                f.write(data)
+            return True
+
+        return False
+    """
+
+    return True
+
+
+def request_block():
+    REQUEST_BLOCK_LOCK.acquire()
+    try:
+        msg = "---LAST_BLOCK---"
+        receive_socket.send(str(len(msg)).encode())
+        receive_socket.send(msg.encode())
+        REQUEST_BLOCK_LOCK.acquire()
+    except ConnectionResetError:
+        return False
+    return True
+
+
+def add_log_entry(entry):
+    s = ""
+    ts = time.localtime(time.time())
+    s += "{0}/{1}/{2} {3:02}:{4:02}:{5:02}\n".format(
+        ts.tm_mday, ts.tm_mon, ts.tm_year, ts.tm_hour, ts.tm_min, ts.tm_sec)
+    s += str(entry)
+    s += "\n\n"
+    with open("log.txt", "ab") as f:
+        f.write(s.encode())
 
 
 # cryptography_check()
@@ -298,35 +593,82 @@ def load_chain():
 
 
 if __name__ == "__main__":
-    genesis_block = Block(0, "GENESIS")
-    mine_block(genesis_block)
+    chain = Blockchain()
+    add_log_entry("Node is started")
 
-    chain_state = [genesis_block]
+    main_socks = []
+    read_socks, write_socks = [], []
+    # readables, writeables, exceptions = [], [], []# TODO: understand difference between writeables and write_socks (for loop to broadcast)
+    pending_messages = []
+
+    generate_main_sockets()
+    add_log_entry("Initialized sharing system")
+    print("Ready for connection to share")
+
+    Thread(target=share_communication).start()
+
+    # TODO: move this to a function, call when request for information is needed (open another socket each time?)
+    receive_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    while 1:
+        try:
+            print("Waiting for connection to receive")
+            receive_socket.connect(RECEIVE_ADDR)
+            add_log_entry("Connected to a sharing user")
+            print("Connected to sharing user successfully")
+            break
+        except (ConnectionRefusedError, TimeoutError):
+            continue
+
+    Thread(target=receive_communication).start()
+
+
+    if request_chain():
+        chain = load_chain("received_chain.pkl")
+        add_log_entry("Got chain from a user")
+        print("Successfully got chain from another user")
+
+    """
+    if request_chain():
+        chain = load_chain("received_chain.pkl")
+        print("Successfully got chain from another user")
+    else:
+        print("Request of chain failed, using new one")
+    """
 
     pending_transactions = []
 
-    a1 = Account()
-    a2 = Account()
-    a1_addr = a1.address
-    a2_addr = a2.address
+    a1 = Account()  # login logic
 
     b1 = ""
     while True:
         cmd = input("> ")
+
         if cmd == "create block":
-            b1 = Block(len(chain_state), chain_state[-1].mix_hash)
+            b1 = Block(chain.next_block_number, chain.last_block().mix_hash)
+            add_log_entry("Created a block")
             print("Block created successfully")
             # print(b1)
 
         elif cmd == "mine block":
             if isinstance(b1, Block) and mine_block(b1):
-                chain_state.append(b1)
-                b1 = ""
+                chain.add_block(b1)
+                add_log_entry("Mined a block")
                 print("Mined successfully and added to the current state")
+                b1.save_block()
+                b1 = ""
+
+                for user_sock in write_socks:  # TODO: thread??
+                    pending_messages.append((user_sock, "block.pkl"))
+                add_log_entry("Shared a block")
+                print("Shared block with other users")
 
         elif cmd == "create transaction":
+            print("Example: " + derive_address(Account().public_key))
+            recipeint = input("recipient address -> ")  # input checks
             data = input("data -> ")
-            pending_transactions.append(a1.create_transaction(a2_addr, data.encode()))
+            new_transaction = a1.create_transaction(recipeint, data.encode())
+            pending_transactions.append(new_transaction)
+            add_log_entry("Created a transaction")
             print("Transaction created successfully and appended to pending transactions")
 
         elif cmd == "add to block":
@@ -335,6 +677,7 @@ if __name__ == "__main__":
                     while len(pending_transactions):
                         b1.add_transaction(pending_transactions[0])
                         pending_transactions.pop(0)
+                    add_log_entry("Added transaction(s) to block")
                     print("Added transaction(s) to block successfully")
                 else:
                     print("No pending transactions")
@@ -342,10 +685,7 @@ if __name__ == "__main__":
                 print("No block created")
 
         elif cmd == "print chain":
-            for b in chain_state:
-                print(b)
-                if b != chain_state[-1]:
-                    print()
+            print(chain)
 
         elif cmd == "print pending":
             if len(pending_transactions):
@@ -354,8 +694,9 @@ if __name__ == "__main__":
             else:
                 print("No pending transactions")
 
+        # used for printing only as there is no need for it in the api
         elif cmd == "verify last block":  # split verify block pow and block signature!
-            block = chain_state[-1]
+            block = chain.last_block()
             mix_hash = block.mix_hash
             nonce = str(block.nonce)
             print("Verification of block No. " + str(block.block_number))
@@ -365,16 +706,30 @@ if __name__ == "__main__":
             print(sha256((mix_hash + nonce).encode()).hexdigest())
 
         elif cmd == "save chain":
-            save_chain(chain_state)
+            chain.save_chain()
+            add_log_entry("Chain saved")
             print("Saved")
 
         elif cmd == "load chain":
+            chain = load_chain()
             try:
-                chain_state = load_chain()
-            except:
+                chain = load_chain()
+            except Exception as e:
                 print("Error loading")
+                print(e)
             else:
+                add_log_entry("Chain loaded")
                 print("Loaded")
+
+        elif cmd == "save account":
+            a1.save_private_key()
+            add_log_entry("Account private key exported")
+            print("Saved account successfully")
+
+        elif cmd == "load account":
+            a1 = load_account()
+            add_log_entry("Account loaded from private key file")
+            print("Loaded account successfully")
 
         else:
             print("No such command")
