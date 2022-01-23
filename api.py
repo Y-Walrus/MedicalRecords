@@ -23,6 +23,9 @@ import select
 # how to make a transaction not have sender public address in it? makes problems in verification
 # pip install rsa
 
+# TODO: share pool for new user
+# TODO: verify new transactions that enter pool
+# TODO: remove from pool transactions that are in a verified block (for this write equal in Transaction)
 
 class Account:  # TODO: get/set functions, _private_key (for all classes)
     def __init__(self, nonce=0, code_hash=""):
@@ -58,6 +61,59 @@ class Account:  # TODO: get/set functions, _private_key (for all classes)
             f.write(pem)
 
 
+class Pool:
+    def __init__(self):
+        self.transactions = []
+
+    def add_transaction(self, transaction):
+        # TODO: check duplicates (with is_equal() in Transaction)
+        # TODO: verify here
+        self.transactions.append(transaction)
+
+    def add_transaction_list(self, transaction_list):
+        for t in transaction_list:
+            self.add_transaction(t)
+
+    def length(self):
+        return len(self.transactions)
+
+    def add_to_block(self, block):
+        while self.length():
+            block.add_transaction(self.transactions[0])
+            self.transactions.pop(0)
+
+    def transaction_location(self, t):
+        pass
+        # return -1 if not found, else location in self.transactions
+
+    def remove_transaction(self, t):
+        # if t.is_equal(self.transactions[i]):
+        pass
+
+    def remove_transactions_of_block(self, b):
+        pass
+
+    def save_pool(self):
+        for t in self.transactions:
+            t.sender_key_to_bytes()
+
+        with open("pool.pkl", "wb") as f:
+            pickle.dump(self.transactions, f, pickle.HIGHEST_PROTOCOL)
+
+        for t in self.transactions:
+            t.sender_bytes_to_key()
+
+    def __str__(self):
+        if self.length():
+            s = ""
+            for t in self.transactions:
+                s += str(t) + "\n"
+            return s[:-1]
+
+        else:
+            return "No pending transactions"
+
+
 class Blockchain:
     def __init__(self):
         self.chain_state = []
@@ -72,6 +128,23 @@ class Blockchain:
     def add_block(self, block):  # verification required before adding if block wasn't just mined
         self.chain_state.append(block)
         self.next_block_number += 1
+        # THIS IS A SMART CONTRACT!
+        for t in block.transactions:
+            if t.data == "hello123".encode():
+                recipeint = t.recipient_address
+                data = "We saw you got a hello123 from a certified doctor, " \
+                       "now you have our permission to do anything you want! Doctor address: " \
+                       + derive_address(t.sender_public_key)
+                new_transaction = smart_contract.create_transaction(recipeint, data.encode())
+                pool.add_transaction(new_transaction)
+                add_log_entry("Smart contract created a transaction")
+                print("Smart contract transaction created successfully and appended to pending transactions")
+
+                new_transaction.save_transaction()
+                for user_sock in write_socks:  # TODO: thread??
+                    pending_messages.append((user_sock, "transaction.pkl"))
+                add_log_entry("Shared a smart contract transaction")
+                print("Shared smart contract transaction with other users")
 
     def read_from_export(self):
         for block in self.chain_state:
@@ -164,7 +237,8 @@ class Block:
         for t in self.transactions:
             # is str good enough here?
             # maybe sender address (it is an object here)
-            s += str(t.sender_public_key) + str(t.recipient_address) + str(t.data)
+            s += str(derive_address(t.sender_public_key)) + str(t.recipient_address) + str(t.data)
+            # print(str(derive_address(t.sender_public_key)) + str(t.recipient_address) + str(t.data))
         return sha256(s.encode()).hexdigest()
 
     def set_mix_hash(self):
@@ -248,6 +322,14 @@ class Transaction:  # not found way to verify with sender address (rsa verify fu
             encoding=serialization.Encoding.PEM,
             format=serialization.PublicFormat.SubjectPublicKeyInfo
         ).decode()
+
+    def save_transaction(self):
+        self.sender_key_to_bytes()
+
+        with open("transaction.pkl", "wb") as f:
+            pickle.dump(self, f, pickle.HIGHEST_PROTOCOL)
+
+        self.sender_bytes_to_key()
 
 
 DIFFICULTY = 5
@@ -355,14 +437,15 @@ def hashing_check():
 
 
 def mine_block(block):
+    block.timestamp = time.time()  # note this it time of starting to mine, not finishing
     block.set_mix_hash()
     nonce = 0
     # while not sha256((block.mix_hash + str(nonce)).encode()).hexdigest().startswith("0" * block.difficulty):
     while not sha256((block.mix_hash + str(nonce)).encode()).hexdigest().startswith("0" * block.difficulty):
         nonce += 1
     block.nonce = nonce
-    block.timestamp = time.time()  # TODO: set timestamp on creation so it enters the mix hash!! otherwise it isnt defended
-    return True  # break in the middle if takes too long?
+    # block.timestamp = time.time()  # TODO: set timestamp on creation so it enters the mix hash!! otherwise it isnt defended
+    return True  # TODO: break in the middle if takes too long?
 
 
 def load_chain(file_name="chain.pkl"):
@@ -402,6 +485,13 @@ def load_block(file_name="block.pkl"):
         block = pickle.load(f)
     block.read_from_export()
     return block
+
+
+def load_transaction(file_name="transaction.pkl"):
+    with open(file_name, "rb") as f:
+        transaction = pickle.load(f)
+    transaction.sender_bytes_to_key()
+    return transaction
 
 
 def load_account(file_name="private_key.pem"):
@@ -459,7 +549,7 @@ def share_communication():
                         pass
                     elif data.startswith("---WHOLE_CHAIN---".encode()):
                         chain.save_chain()
-                        pending_messages.append((sock_obj, "chain.pkl"))  # TODO: better file transfer
+                        pending_messages.append((sock_obj, "chain.pkl"))  # TODO: better file transfer, add pool?
 
                     elif data.startswith("---LAST_BLOCK---".encode()):
                         chain.last_block().save_block()
@@ -479,6 +569,11 @@ def share_communication():
                             data = f.read()
                         user_sock.send(str(len("---LAST_BLOCK---") + len(data)).zfill(5).encode())
                         user_sock.send("---LAST_BLOCK---".encode() + data)
+                    elif data == "transaction.pkl":
+                        with open(data, "rb") as f:
+                            data = f.read()
+                        user_sock.send(str(len("---TRANSACTION---") + len(data)).zfill(5).encode())
+                        user_sock.send("---TRANSACTION---".encode() + data)
                     else:
                         user_sock.send(str(len(data)).zfill(5).encode())
                         user_sock.send(data)
@@ -508,6 +603,15 @@ def receive_communication():
                 f.write(data)
                 REQUEST_CHAIN_LOCK.release()
 
+        elif data.startswith("---TRANSACTION---".encode()):
+            data = data[len("---TRANSACTION---"):]
+            with open("received_transaction.pkl", "wb") as f:
+                f.write(data)
+            add_log_entry("Received a transaction list form a user")
+            print("RECEIVED A TRANSACTION LIST")
+            transaction = load_transaction("received_transaction.pkl")
+            pool.add_transaction(transaction)  # TODO: verification here or included in add_transaction
+
         elif data.startswith("---LAST_BLOCK---".encode()):
             data = data[len("---LAST_BLOCK---"):]
             with open("received_block.pkl", "wb") as f:
@@ -518,8 +622,18 @@ def receive_communication():
             new_block = load_block("received_block.pkl")
             add_log_entry(new_block)
             print(new_block)
-            # TODO: new block protocol here
-            chain.add_block(new_block)
+
+            # TODO: customized exceptions for each
+            print("mixhash, nonce, difficulty, trnasactions -", new_block.verify_mix_hash(), new_block.verify_nonce(),
+                  new_block.verify_difficulty(), new_block.verify_transactions())
+            if new_block.verify_block():
+                chain.add_block(new_block)
+                print("Added block to chain after verification")
+                add_log_entry("Added block to chain after verification")
+            else:
+                print("ATTENTION - the received block hasn't passed verification, wasn't added")
+                add_log_entry("ATTENTION - the received block hasn't passed verification, wasn't added")
+                # TODO: add specific reason, maybe blacklist person if smth bad
         else:
             print(data)
 
@@ -621,7 +735,6 @@ if __name__ == "__main__":
 
     Thread(target=receive_communication).start()
 
-
     if request_chain():
         chain = load_chain("received_chain.pkl")
         add_log_entry("Got chain from a user")
@@ -635,9 +748,13 @@ if __name__ == "__main__":
         print("Request of chain failed, using new one")
     """
 
-    pending_transactions = []
+    pool = Pool()
 
     a1 = Account()  # login logic
+    print("My address: " + derive_address(a1.public_key))
+
+    # probably will be separated
+    smart_contract = Account()
 
     b1 = ""
     while True:
@@ -667,16 +784,20 @@ if __name__ == "__main__":
             recipeint = input("recipient address -> ")  # input checks
             data = input("data -> ")
             new_transaction = a1.create_transaction(recipeint, data.encode())
-            pending_transactions.append(new_transaction)
+            pool.add_transaction(new_transaction)
             add_log_entry("Created a transaction")
             print("Transaction created successfully and appended to pending transactions")
 
+            new_transaction.save_transaction()
+            for user_sock in write_socks:  # TODO: thread??
+                pending_messages.append((user_sock, "transaction.pkl"))
+            add_log_entry("Shared a transaction")
+            print("Shared transaction with other users")
+
         elif cmd == "add to block":
             if isinstance(b1, Block):
-                if len(pending_transactions):
-                    while len(pending_transactions):
-                        b1.add_transaction(pending_transactions[0])
-                        pending_transactions.pop(0)
+                if pool.length():
+                    pool.add_to_block(b1)
                     add_log_entry("Added transaction(s) to block")
                     print("Added transaction(s) to block successfully")
                 else:
@@ -688,11 +809,7 @@ if __name__ == "__main__":
             print(chain)
 
         elif cmd == "print pending":
-            if len(pending_transactions):
-                for t in pending_transactions:
-                    print(t)
-            else:
-                print("No pending transactions")
+            print(str(pool))
 
         # used for printing only as there is no need for it in the api
         elif cmd == "verify last block":  # split verify block pow and block signature!

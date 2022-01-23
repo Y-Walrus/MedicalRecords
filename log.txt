@@ -191,3 +191,984 @@ Node is started
 19/1/2022 12:04:54
 Initialized sharing system
 
+19/1/2022 12:12:15
+Node is started
+
+19/1/2022 12:12:15
+Initialized sharing system
+
+19/1/2022 12:12:58
+Connected to a sharing user
+
+19/1/2022 12:12:58
+Got chain from a user
+
+19/1/2022 12:13:50
+Node is started
+
+19/1/2022 12:13:50
+Initialized sharing system
+
+19/1/2022 12:13:50
+Connected to a sharing user
+
+19/1/2022 12:13:50
+Got chain from a user
+
+19/1/2022 12:14:18
+Received a new block form a user
+
+19/1/2022 12:14:18
+Block No. 2
+Mined: 19/1/2022 10:14:18 UTC
+MixHash: a4483c8612c40638cba5d98c67d1f79bd07c6410154388facc64717b3c1fa749
+Diff: 5
+Nonce: 230513
+Parent hash: f44443f61bb842de20724944430afa6aed8ad471bf2c3ee1fe8e587331546acf
+
+19/1/2022 12:18:42
+Received a new block form a user
+
+19/1/2022 12:18:42
+Block No. 3
+Mined: 19/1/2022 10:18:42 UTC
+MixHash: eda21a4802c873f2f5a3e44ac4d1b105ab23e94a03a3e69a4bbaa5bf6463058d
+Transaction 59d4ae65c59ab3ea2beb1d1e866672bce13d3c41 to a77343f8f5403b9ec9ed25af1dc7cd5b0585c46b: b'hi2'
+Diff: 5
+Nonce: 164377
+Parent hash: a4483c8612c40638cba5d98c67d1f79bd07c6410154388facc64717b3c1fa749
+
+20/1/2022 13:37:36
+Node is started
+
+20/1/2022 13:37:37
+Initialized sharing system
+
+20/1/2022 13:37:37
+Connected to a sharing user
+
+20/1/2022 13:37:37
+Got chain from a user
+
+20/1/2022 13:46:15
+Node is started
+
+20/1/2022 13:46:15
+Initialized sharing system
+
+20/1/2022 13:46:15
+Connected to a sharing user
+
+20/1/2022 13:46:15
+Got chain from a user
+
+20/1/2022 13:47:12
+Received a new block form a user
+
+20/1/2022 13:47:12
+Block No. 2
+Mined: 20/1/2022 11:47:12 UTC
+MixHash: d9606f24f906c6823be60f948745ffeb5b20ea335731669a2bf753b45c268896
+Transaction d2ced852fd271141f17725749f38535c07b42337 to c8c8034d9a19abaa8eeada8ec40dbb83cd627c14: b'i got 1 bitcoin'
+Diff: 5
+Nonce: 1226654
+Parent hash: 2d4097284d1552d8ef8bc762eb64177df9fabe6a7a00ba7019f53ccddc69ec57
+
+20/1/2022 14:00:56
+Node is started
+
+20/1/2022 14:00:56
+Initialized sharing system
+
+20/1/2022 14:00:57
+Connected to a sharing user
+
+20/1/2022 14:00:57
+Got chain from a user
+
+20/1/2022 14:02:07
+Node is started
+
+20/1/2022 14:02:07
+Initialized sharing system
+
+20/1/2022 14:02:07
+Connected to a sharing user
+
+20/1/2022 14:02:08
+Got chain from a user
+
+20/1/2022 14:02:38
+Received a new block form a user
+
+20/1/2022 14:02:38
+Block No. 2
+Mined: 20/1/2022 12:02:38 UTC
+MixHash: c56997d7996599e8f49eb9bd322cd622dc6aeee1a395e8edf9e42b64bf115283
+Diff: 5
+Nonce: 153195
+Parent hash: 6a0ae7f85d4cfbf2f29aa6996a9b4e4d707fba27992f5cfac135e54317280492
+
+22/1/2022 22:37:02
+Node is started
+
+22/1/2022 22:37:02
+Initialized sharing system
+
+22/1/2022 22:37:02
+Connected to a sharing user
+
+22/1/2022 22:37:02
+Got chain from a user
+
+22/1/2022 22:37:02
+Connection with new user for sharing
+
+22/1/2022 22:37:34
+Received a new block form a user
+
+22/1/2022 22:37:34
+Block No. 1
+Mined: 22/1/2022 20:37:34 UTC
+MixHash: 1b4e127e93b61e1734add7f629c8632fb47076e97c47064d18bb7fbca30f95c7
+Transaction 61d48684fef4ddf5d25a5ffd0c92814db5be6154 to 8fced0b9f977b79b06e6ba80b8716c7660dca6c0: b'hi'
+Diff: 5
+Nonce: 764077
+Parent hash: 6207421afd943319f8fc275e72953d8142a6762b610c1315ebb3678ac8212ad4
+
+22/1/2022 22:37:50
+Created a block
+
+22/1/2022 22:38:03
+Created a transaction
+
+22/1/2022 22:38:07
+Added transaction(s) to block
+
+22/1/2022 22:38:11
+Mined a block
+
+22/1/2022 22:38:11
+Shared a block
+
+22/1/2022 22:47:08
+Node is started
+
+22/1/2022 22:47:08
+Initialized sharing system
+
+22/1/2022 22:47:08
+Connected to a sharing user
+
+22/1/2022 22:47:09
+Got chain from a user
+
+22/1/2022 22:47:37
+Received a new block form a user
+
+22/1/2022 22:47:37
+Block No. 3
+Mined: 22/1/2022 20:47:37 UTC
+MixHash: fda8fe4b0898d55b20984697875875148e11682fc44f1cf9177704aae4fe6df9
+Transaction 61d48684fef4ddf5d25a5ffd0c92814db5be6154 to e01a5fe35ca0fd3937f245a7aa1d5a074482ce69: b'hi'
+Diff: 5
+Nonce: 889636
+Parent hash: 41642a9c2f9dc09b22ddbdf5ac0fa8a81711e625dbf80ec3740c3c702f45bdc0
+
+22/1/2022 22:47:37
+ATTENTION - the received block hasn't passed verification, wasn't added
+
+23/1/2022 00:17:54
+Node is started
+
+23/1/2022 00:17:54
+Initialized sharing system
+
+23/1/2022 00:17:54
+Connected to a sharing user
+
+23/1/2022 00:17:54
+Got chain from a user
+
+23/1/2022 00:19:04
+Node is started
+
+23/1/2022 00:19:04
+Initialized sharing system
+
+23/1/2022 00:19:04
+Connected to a sharing user
+
+23/1/2022 00:19:04
+Got chain from a user
+
+23/1/2022 00:19:35
+Received a new block form a user
+
+23/1/2022 00:19:35
+Block No. 4
+Mined: 22/1/2022 22:19:35 UTC
+MixHash: 8680ebdd5c9937e02d5b4bbdb9485a7741f3ccd1ab55b36ab285b7eca2d6e250
+Transaction 61d48684fef4ddf5d25a5ffd0c92814db5be6154 to ae243aabaeb69eb134c4849748a8b1747770dbe8: b'hello'
+Diff: 5
+Nonce: 489852
+Parent hash: fda8fe4b0898d55b20984697875875148e11682fc44f1cf9177704aae4fe6df9
+
+23/1/2022 00:19:35
+ATTENTION - the received block hasn't passed verification, wasn't added
+
+23/1/2022 00:20:20
+Node is started
+
+23/1/2022 00:20:20
+Initialized sharing system
+
+23/1/2022 00:20:20
+Connected to a sharing user
+
+23/1/2022 00:20:20
+Got chain from a user
+
+23/1/2022 00:22:44
+Node is started
+
+23/1/2022 00:22:44
+Initialized sharing system
+
+23/1/2022 00:22:44
+Connected to a sharing user
+
+23/1/2022 00:22:44
+Got chain from a user
+
+23/1/2022 00:22:54
+Node is started
+
+23/1/2022 00:23:14
+Node is started
+
+23/1/2022 00:23:14
+Initialized sharing system
+
+23/1/2022 00:23:14
+Connection with new user for sharing
+
+23/1/2022 00:23:14
+Connected to a sharing user
+
+23/1/2022 00:23:14
+Got chain from a user
+
+23/1/2022 00:24:26
+Received a new block form a user
+
+23/1/2022 00:24:26
+Block No. 1
+Mined: 22/1/2022 22:24:26 UTC
+MixHash: 929a17cbbd4cb4b2220ab15acc9443d663d01abf692b0b960359136696fa5d97
+Transaction bdeb55bc99400eb01cfc9f1f086561dd2d09ceea to 131c2344bf9d8b22c06cf4323b3b78bd27c3d7b5: b'hi'
+Diff: 5
+Nonce: 535853
+Parent hash: f46a4e006e8bd67396f56b1f2bda21033cb0c270578d010b1ba852cc30d83a46
+
+23/1/2022 00:24:26
+ATTENTION - the received block hasn't passed verification, wasn't added
+
+23/1/2022 00:27:07
+Ended a connection for sharing
+
+23/1/2022 00:27:08
+Connection with new user for sharing
+
+23/1/2022 00:28:37
+Node is started
+
+23/1/2022 00:28:37
+Initialized sharing system
+
+23/1/2022 00:28:37
+Connected to a sharing user
+
+23/1/2022 00:28:37
+Got chain from a user
+
+23/1/2022 00:28:38
+Connection with new user for sharing
+
+23/1/2022 00:28:53
+Received a new block form a user
+
+23/1/2022 00:28:53
+Block No. 1
+Mined: 22/1/2022 22:28:52 UTC
+MixHash: 12c3015aafefdcc875a3a14de4843c116a57cdeba59e0663586082545a3232e2
+Transaction d8dd037c4d7916d004310d87115114fc95e81b4f to 9b35126a54802b29eef688eab112b1cd89e692bd: b'hello'
+Diff: 5
+Nonce: 313025
+Parent hash: 27e587241c79162df8d6c0826e745ceafc3dfe9eb65f8be6aa910e7c53eb8917
+
+23/1/2022 00:28:53
+Added block to chain after verification
+
+23/1/2022 00:29:20
+Created a block
+
+23/1/2022 00:29:32
+Created a transaction
+
+23/1/2022 00:29:45
+Added transaction(s) to block
+
+23/1/2022 00:29:47
+Mined a block
+
+23/1/2022 00:29:47
+Shared a block
+
+23/1/2022 00:30:44
+Received a new block form a user
+
+23/1/2022 00:30:44
+Block No. 3
+Mined: 22/1/2022 22:30:44 UTC
+MixHash: b714dd7090076b3a662d2fa3addf484f7bdc1345001d253bbe8697e994494958
+Transaction d8dd037c4d7916d004310d87115114fc95e81b4f to ea7e8d4fb05ccb4faa29e96ef3cc02c13f34ff9f: b'hello hello'
+Transaction d8dd037c4d7916d004310d87115114fc95e81b4f to hiush to you: b'hiush to you'
+Diff: 5
+Nonce: 11042
+Parent hash: 4b4493ded868e58162a81b97037c652ddc16a9584c4d457ea5ba16010d4831c6
+
+23/1/2022 00:30:44
+Added block to chain after verification
+
+23/1/2022 00:31:37
+Ended a connection for sharing
+
+23/1/2022 00:31:39
+Connection with new user for sharing
+
+23/1/2022 00:31:45
+Ended a connection for sharing
+
+23/1/2022 00:41:04
+Node is started
+
+23/1/2022 00:41:04
+Initialized sharing system
+
+23/1/2022 00:41:04
+Connected to a sharing user
+
+23/1/2022 00:41:04
+Got chain from a user
+
+23/1/2022 00:41:04
+Connection with new user for sharing
+
+23/1/2022 01:08:00
+Node is started
+
+23/1/2022 01:08:00
+Initialized sharing system
+
+23/1/2022 01:08:04
+Connection with new user for sharing
+
+23/1/2022 01:08:04
+Connected to a sharing user
+
+23/1/2022 01:08:04
+Got chain from a user
+
+23/1/2022 01:08:09
+Created a block
+
+23/1/2022 01:08:22
+Created a transaction
+
+23/1/2022 01:10:14
+Node is started
+
+23/1/2022 01:10:14
+Initialized sharing system
+
+23/1/2022 01:10:14
+Connected to a sharing user
+
+23/1/2022 01:10:14
+Got chain from a user
+
+23/1/2022 01:10:17
+Created a block
+
+23/1/2022 01:10:32
+Created a transaction
+
+23/1/2022 01:11:16
+Node is started
+
+23/1/2022 01:11:16
+Initialized sharing system
+
+23/1/2022 01:11:16
+Connected to a sharing user
+
+23/1/2022 01:11:16
+Got chain from a user
+
+23/1/2022 01:11:26
+Created a block
+
+23/1/2022 01:11:35
+Created a transaction
+
+23/1/2022 01:12:22
+Created a transaction
+
+23/1/2022 01:12:53
+Node is started
+
+23/1/2022 01:12:53
+Initialized sharing system
+
+23/1/2022 01:12:53
+Connected to a sharing user
+
+23/1/2022 01:12:53
+Got chain from a user
+
+23/1/2022 01:12:58
+Created a block
+
+23/1/2022 01:13:04
+Created a transaction
+
+23/1/2022 01:13:10
+Created a transaction
+
+23/1/2022 01:13:32
+Node is started
+
+23/1/2022 01:13:32
+Initialized sharing system
+
+23/1/2022 01:13:32
+Connected to a sharing user
+
+23/1/2022 01:13:32
+Got chain from a user
+
+23/1/2022 01:13:34
+Created a block
+
+23/1/2022 01:13:41
+Created a transaction
+
+23/1/2022 01:13:47
+Created a transaction
+
+23/1/2022 01:15:19
+Mined a block
+
+23/1/2022 01:15:19
+Shared a block
+
+23/1/2022 01:15:55
+Node is started
+
+23/1/2022 01:15:55
+Initialized sharing system
+
+23/1/2022 01:15:55
+Connected to a sharing user
+
+23/1/2022 01:15:55
+Got chain from a user
+
+23/1/2022 01:15:59
+Node is started
+
+23/1/2022 01:15:59
+Initialized sharing system
+
+23/1/2022 01:16:04
+Connection with new user for sharing
+
+23/1/2022 01:16:04
+Connected to a sharing user
+
+23/1/2022 01:16:04
+Got chain from a user
+
+23/1/2022 01:16:08
+Created a block
+
+23/1/2022 01:16:16
+Created a transaction
+
+23/1/2022 01:16:24
+Created a transaction
+
+23/1/2022 01:16:40
+Added transaction(s) to block
+
+23/1/2022 01:16:54
+Mined a block
+
+23/1/2022 01:16:54
+Shared a block
+
+23/1/2022 01:36:11
+Ended a connection for sharing
+
+23/1/2022 01:52:59
+Node is started
+
+23/1/2022 01:52:59
+Initialized sharing system
+
+23/1/2022 01:53:20
+Node is started
+
+23/1/2022 01:53:20
+Initialized sharing system
+
+23/1/2022 01:53:24
+Connection with new user for sharing
+
+23/1/2022 01:53:24
+Connected to a sharing user
+
+23/1/2022 01:53:24
+Got chain from a user
+
+23/1/2022 01:53:30
+Created a block
+
+23/1/2022 01:53:45
+Created a transaction
+
+23/1/2022 01:53:45
+Shared a transaction
+
+23/1/2022 01:54:37
+Ended a connection for sharing
+
+23/1/2022 01:54:41
+Node is started
+
+23/1/2022 01:54:41
+Initialized sharing system
+
+23/1/2022 01:54:44
+Connection with new user for sharing
+
+23/1/2022 01:54:45
+Connected to a sharing user
+
+23/1/2022 01:54:45
+Got chain from a user
+
+23/1/2022 01:55:14
+Node is started
+
+23/1/2022 01:55:14
+Initialized sharing system
+
+23/1/2022 01:55:14
+Connected to a sharing user
+
+23/1/2022 01:55:14
+Got chain from a user
+
+23/1/2022 01:55:16
+Connection with new user for sharing
+
+23/1/2022 01:55:24
+Created a block
+
+23/1/2022 01:55:54
+Created a transaction
+
+23/1/2022 01:55:54
+Shared a transaction
+
+23/1/2022 01:57:24
+Created a transaction
+
+23/1/2022 01:57:24
+Shared a transaction
+
+23/1/2022 01:58:06
+Node is started
+
+23/1/2022 01:58:06
+Initialized sharing system
+
+23/1/2022 01:58:06
+Connected to a sharing user
+
+23/1/2022 01:58:06
+Got chain from a user
+
+23/1/2022 01:58:06
+Connection with new user for sharing
+
+23/1/2022 01:58:15
+Received a transaction list form a user
+
+23/1/2022 01:58:29
+Created a transaction
+
+23/1/2022 01:58:29
+Shared a transaction
+
+23/1/2022 01:58:47
+Received a transaction list form a user
+
+23/1/2022 01:59:02
+Received a transaction list form a user
+
+23/1/2022 01:59:10
+Created a block
+
+23/1/2022 01:59:14
+Added transaction(s) to block
+
+23/1/2022 01:59:26
+Mined a block
+
+23/1/2022 01:59:26
+Shared a block
+
+23/1/2022 01:59:38
+Ended a connection for sharing
+
+23/1/2022 01:59:42
+Node is started
+
+23/1/2022 01:59:42
+Initialized sharing system
+
+23/1/2022 01:59:44
+Connection with new user for sharing
+
+23/1/2022 01:59:44
+Connected to a sharing user
+
+23/1/2022 01:59:44
+Got chain from a user
+
+23/1/2022 01:59:47
+Created a block
+
+23/1/2022 01:59:53
+Created a transaction
+
+23/1/2022 01:59:53
+Shared a transaction
+
+23/1/2022 02:00:05
+Created a transaction
+
+23/1/2022 02:00:05
+Shared a transaction
+
+23/1/2022 02:01:00
+Received a new block form a user
+
+23/1/2022 02:01:00
+Block No. 1
+Mined: 23/1/2022 00:00:57 UTC
+MixHash: d9205bf26379cde81c161fdcbc796bf7384e086f1f203832bf63ad7d48742c60
+Transaction a909a182513b58cf7fd9c670a69c0e7c25204732 to f1238ecd4c2bc275bfc2797ef6c3ec25828cca3d: b'hi'
+Transaction a909a182513b58cf7fd9c670a69c0e7c25204732 to 39888c748e6fb6047ff7f11c82c54b4ba82a0011: b'hello2'
+Diff: 5
+Nonce: 638257
+Parent hash: e3a52f840b74e45cd6d288c05c9eb9fa1a68a925c6fd3054d488d823f480fa9e
+
+23/1/2022 02:01:00
+Added block to chain after verification
+
+23/1/2022 02:01:14
+Created a transaction
+
+23/1/2022 02:01:14
+Shared a transaction
+
+23/1/2022 02:10:25
+Node is started
+
+23/1/2022 02:10:25
+Initialized sharing system
+
+23/1/2022 02:10:32
+Connection with new user for sharing
+
+23/1/2022 02:10:32
+Connected to a sharing user
+
+23/1/2022 02:10:32
+Got chain from a user
+
+23/1/2022 02:10:50
+Created a transaction
+
+23/1/2022 02:10:50
+Shared a transaction
+
+23/1/2022 02:11:35
+Received a transaction list form a user
+
+23/1/2022 02:11:41
+Received a new block form a user
+
+23/1/2022 02:11:41
+Block No. 1
+Mined: 23/1/2022 00:11:40 UTC
+MixHash: cba98392044cdb6fc21d11168f7c525b2299ae0822959edb1da65740b2a1a1ad
+Transaction 133664926545b9cee12303ee5a91ed5df104ed99 to 54e14eb193133de5f511b328ef69f397b90a75a0: b'hello'
+Transaction c89226f21ba5848c3cb42971892c256de4430f4b to 1e5698ac53c374a40145357884cc5794ceb85b7f: b'hello1'
+Diff: 5
+Nonce: 415348
+Parent hash: ba16f947a07c954f251b69e4e86b21ff2689106bc668ba75612a309bc2cf91a0
+
+23/1/2022 02:11:41
+Added block to chain after verification
+
+23/1/2022 02:12:06
+Received a transaction list form a user
+
+23/1/2022 02:13:33
+Received a new block form a user
+
+23/1/2022 02:13:33
+Block No. 2
+Mined: 23/1/2022 00:13:32 UTC
+MixHash: ceca324b230b4ba7ba81a24a4a41ea4ebe8af1510b0bed1b9365fcab242d2bd8
+Transaction c89226f21ba5848c3cb42971892c256de4430f4b to b07cc7330dca3f0e74f66e84dbd737bdad7f4f00: b'hello123'
+Diff: 5
+Nonce: 1143278
+Parent hash: cba98392044cdb6fc21d11168f7c525b2299ae0822959edb1da65740b2a1a1ad
+
+23/1/2022 02:13:33
+Added block to chain after verification
+
+23/1/2022 02:14:54
+Node is started
+
+23/1/2022 02:14:54
+Initialized sharing system
+
+23/1/2022 02:14:56
+Connection with new user for sharing
+
+23/1/2022 02:14:56
+Connected to a sharing user
+
+23/1/2022 02:14:56
+Got chain from a user
+
+23/1/2022 02:15:06
+Created a transaction
+
+23/1/2022 02:15:06
+Shared a transaction
+
+23/1/2022 02:15:25
+Received a transaction list form a user
+
+23/1/2022 02:15:36
+Received a new block form a user
+
+23/1/2022 02:15:36
+Block No. 1
+Mined: 23/1/2022 00:15:35 UTC
+MixHash: 710ec06ffa7737a5e5b3ccc14d8b0e1b0c6ad23e8e8f22e5336329bcff6854d6
+Diff: 5
+Nonce: 834899
+Parent hash: 08a19a37f9e2e5fdca0948eafc40df4fafccc51457d02929305e747c76f4a1ea
+
+23/1/2022 02:15:36
+Added block to chain after verification
+
+23/1/2022 02:15:45
+Received a new block form a user
+
+23/1/2022 02:15:45
+Block No. 2
+Mined: 23/1/2022 00:15:44 UTC
+MixHash: ece2d8910d7b3a62e1fde1f7df78b48d63e107e268502e8fc4b618d0c73df7e9
+Transaction b398c0a108cbbe74b696260461599b50404f4eee to 11a7642dc59f3851e8ce463443880fd8efc48792: b'hi'
+Transaction 152cba996daa6b0222bd2a15fd0350fb9c2a143c to a048d3427e476414772b4091ea2d344c26feb095: b'hello1'
+Diff: 5
+Nonce: 830148
+Parent hash: 710ec06ffa7737a5e5b3ccc14d8b0e1b0c6ad23e8e8f22e5336329bcff6854d6
+
+23/1/2022 02:15:45
+Added block to chain after verification
+
+23/1/2022 02:16:28
+Created a transaction
+
+23/1/2022 02:16:28
+Shared a transaction
+
+23/1/2022 02:16:42
+Received a transaction list form a user
+
+23/1/2022 02:16:57
+Received a new block form a user
+
+23/1/2022 02:16:57
+Block No. 3
+Mined: 23/1/2022 00:16:56 UTC
+MixHash: 16800b42b451082575e7d45e81c6da05da413ddf74d3cbbec7ea2f7b0d29b11f
+Transaction b398c0a108cbbe74b696260461599b50404f4eee to ef4d3075c498149329882f922e6c656ddd56c6fe: b'1'
+Transaction 152cba996daa6b0222bd2a15fd0350fb9c2a143c to 5b24f4cf363adc3c53b789c9271ffb86d88960bf: b'hello123'
+Diff: 5
+Nonce: 566419
+Parent hash: ece2d8910d7b3a62e1fde1f7df78b48d63e107e268502e8fc4b618d0c73df7e9
+
+23/1/2022 02:16:57
+Smart contract created a transaction
+
+23/1/2022 02:16:57
+Added block to chain after verification
+
+23/1/2022 02:19:39
+Node is started
+
+23/1/2022 02:19:39
+Initialized sharing system
+
+23/1/2022 02:19:39
+Connected to a sharing user
+
+23/1/2022 02:19:39
+Got chain from a user
+
+23/1/2022 02:20:04
+Connection with new user for sharing
+
+23/1/2022 02:20:06
+Node is started
+
+23/1/2022 02:20:06
+Initialized sharing system
+
+23/1/2022 02:20:06
+Connected to a sharing user
+
+23/1/2022 02:20:06
+Got chain from a user
+
+23/1/2022 02:20:17
+Created a transaction
+
+23/1/2022 02:20:17
+Shared a transaction
+
+23/1/2022 02:20:28
+Node is started
+
+23/1/2022 02:20:28
+Initialized sharing system
+
+23/1/2022 02:20:32
+Node is started
+
+23/1/2022 02:20:32
+Initialized sharing system
+
+23/1/2022 02:20:37
+Connection with new user for sharing
+
+23/1/2022 02:20:37
+Connected to a sharing user
+
+23/1/2022 02:20:37
+Got chain from a user
+
+23/1/2022 02:20:43
+Created a transaction
+
+23/1/2022 02:20:43
+Shared a transaction
+
+23/1/2022 02:21:33
+Received a transaction list form a user
+
+23/1/2022 02:24:03
+Received a new block form a user
+
+23/1/2022 02:24:03
+Block No. 1
+Mined: 23/1/2022 00:24:00 UTC
+MixHash: 967e6b508ef1ecde0ec378a54a98ce7bc8d1dcdeb3b83bc45f32fc308ddc02ee
+Transaction 1741962b48fbc9de4f6afd5e86fc9fcfb9cf72b4 to 766cbf0d9f0c953e2b02cc7b009db2cb924d9ae3: b'hi'
+Transaction bcb9667b1578a70b429b286985ce5a8a7567bcd1 to 4ba06fc94e13b71a7a5ac675e5ca4cc824446832: b'hello123'
+Diff: 5
+Nonce: 2593552
+Parent hash: 1bfc7613ce01cc2617856e12feb4a37938589d82a4d3c20bb87bea8a5b4815e9
+
+23/1/2022 02:24:03
+Smart contract created a transaction
+
+23/1/2022 02:24:03
+Shared a smart contract transaction
+
+23/1/2022 02:24:03
+Added block to chain after verification
+
+23/1/2022 02:25:22
+Received a new block form a user
+
+23/1/2022 02:25:22
+Block No. 2
+Mined: 23/1/2022 00:25:21 UTC
+MixHash: 25316dac3d5d4a1ab897e78b6f64bc7ac0ecf0180872599f6ece7521092d5e06
+Transaction 6bd3fa14d402b36ea52e70630c18e5cc225c3153 to 4ba06fc94e13b71a7a5ac675e5ca4cc824446832: b'We saw you got a hello123 from a certified doctor, now you have our permission to do anything you want! Doctor address: bcb9667b1578a70b429b286985ce5a8a7567bcd1'
+Diff: 5
+Nonce: 667421
+Parent hash: 967e6b508ef1ecde0ec378a54a98ce7bc8d1dcdeb3b83bc45f32fc308ddc02ee
+
+23/1/2022 02:25:22
+Added block to chain after verification
+
+23/1/2022 02:26:34
+Node is started
+
+23/1/2022 02:26:34
+Initialized sharing system
+
+23/1/2022 02:26:39
+Connection with new user for sharing
+
+23/1/2022 02:26:39
+Connected to a sharing user
+
+23/1/2022 02:26:39
+Got chain from a user
+
+23/1/2022 02:27:03
+Received a transaction list form a user
+
+23/1/2022 02:27:15
+Created a block
+
+23/1/2022 02:27:17
+Added transaction(s) to block
+
+23/1/2022 02:27:21
+Smart contract created a transaction
+
+23/1/2022 02:27:21
+Shared a smart contract transaction
+
+23/1/2022 02:27:21
+Mined a block
+
+23/1/2022 02:27:21
+Shared a block
+
